@@ -1,0 +1,72 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.AssetMapper">
+
+    <resultMap id="result" type="com.example.vo.Asset">
+        <result property="assetId" column="assetId"></result>
+        <result property="nodeContent" column="nodeContent"></result>
+        <result property="parentNodeContent" column="parentNodeContent"></result>
+        <result property="nodeNum" column="nodeNum"></result>
+        <result property="parentNum" column="parentNum"></result>
+    </resultMap>
+
+    <!--获取当前所有设备树形结构-->
+    <select id="getAssetTree" resultMap="result">
+        SELECT
+            t1.assetId,
+            t1.nodeContent,
+            t1.nodeNum,
+            t1.parentNodeContent,
+            t1.parentNum
+        FROM
+            asset t1
+                LEFT JOIN asset t2 ON t1.parentNum = t2.nodeNum
+    </select>
+
+    <select id="ListAsset" resultMap="result">
+        select * from asset
+    </select>
+
+    <select id="findAssetByName" resultMap="result" parameterType="String">
+        select * from asset where name like concat(concat('%',#{name}),'%') order by assetId desc
+    </select>
+
+    <select id="queryPage" resultMap="result"  parameterType="Integer">
+        select * from asset order by assetId desc limit #{startRows},5
+    </select>
+
+    <select id="getRowCount" resultType="Integer">
+        select count(*) from asset
+    </select>
+
+    <insert id="insertAsset" parameterType="com.example.vo.Asset">
+        INSERT INTO asset
+        (
+            assetId,nodeContent,parentNodeContent,nodeNum,parentNum
+        )
+        VALUES (
+                   #{assetId},
+                   #{nodeContent, jdbcType=VARCHAR},
+                   #{parentNodeContent, jdbcType=VARCHAR},
+                   #{nodeNum, jdbcType=VARCHAR}
+                   #{parentNum, jdbcType=VARCHAR}
+               )
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from asset where assetId=#{assetId}
+    </delete>
+
+    <update id="Update" parameterType="com.example.vo.User">
+        update asset
+        set asset.nodeContent=#{nodeContent},asset.parentNodeContent=#{parentNodeContent},asset.nodeNum=#{nodeNum},
+            asset.parentNum=#{parentNum}
+        where asset.assetId=#{assetId}
+    </update>
+
+
+
+</mapper>

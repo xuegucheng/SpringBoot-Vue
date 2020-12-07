@@ -1,0 +1,56 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.UserMapper">
+
+    <resultMap id="result" type="com.example.vo.User">
+        <result property="id" column="id"></result>
+        <result property="name" column="name"></result>
+        <result property="city" column="city"></result>
+        <result property="sex" column="sex"></result>
+    </resultMap>
+
+    <select id="ListUser" resultMap="result">
+        select * from user 
+    </select>
+    
+    <select id="findUserByName" resultMap="result" parameterType="String">
+        select * from USER where name like concat(concat('%',#{userName}),'%') order by id desc
+    </select>
+
+    <select id="queryPage" resultMap="result"  parameterType="Integer">
+        select * from user order by id desc limit #{startRows},5
+    </select>
+
+    <select id="getRowCount" resultType="Integer">
+        select count(*) from user
+    </select>
+
+    <insert id="insertUser" parameterType="com.example.vo.User">
+        INSERT INTO user
+        (
+            id,name,city,sex
+        )
+        VALUES (
+                   #{userId},
+                   #{userName, jdbcType=VARCHAR},
+                   #{city, jdbcType=VARCHAR},
+                   #{sex, jdbcType=VARCHAR}
+               )
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from user where id=#{userId}
+    </delete>
+
+    <update id="Update" parameterType="com.example.vo.User">
+        update user
+        set user.name=#{userName},user.city=#{city},user.sex=#{sex}
+        where user.id=#{userId}
+    </update>
+
+
+
+</mapper>
